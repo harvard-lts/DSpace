@@ -355,6 +355,7 @@ public class LDNMetadataProcessor implements LDNProcessor {
                             format("Invalid context id %s", url));
                 }
             } catch (RestClientException e) {
+                log.error(format("Failed to resolve context id %s.", url), e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     format("Failed to resolve context id %s. %s", url, e.getMessage()));
             }
