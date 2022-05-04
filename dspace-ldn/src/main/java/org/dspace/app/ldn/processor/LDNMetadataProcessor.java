@@ -96,9 +96,9 @@ public class LDNMetadataProcessor implements LDNProcessor {
 
     @PostConstruct
     public void init() {
-        String allowedExternalResolverUrls = configurationService.getProperty("ldn.notify.allowed-external-resolver-urls");
-        if (allowedExternalResolverUrls != null) {
-            for (String allowedExternalResolverUrl : allowedExternalResolverUrls.split(",")) {
+        String resolverUrls = configurationService.getProperty("ldn.notify.allowed-external-resolver-urls");
+        if (resolverUrls != null) {
+            for (String allowedExternalResolverUrl : resolverUrls.split(",")) {
                 this.allowedExternalResolverUrls.add(allowedExternalResolverUrl.trim());
             }
         }
