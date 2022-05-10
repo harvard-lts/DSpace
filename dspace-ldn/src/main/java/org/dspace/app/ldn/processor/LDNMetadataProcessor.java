@@ -9,7 +9,8 @@ package org.dspace.app.ldn.processor;
 
 import static java.lang.String.format;
 
-import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,14 +28,12 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.dspace.app.ldn.action.ActionStatus;
 import org.dspace.app.ldn.action.LDNAction;
 import org.dspace.app.ldn.model.Notification;
 import org.dspace.app.ldn.utility.LDNUtils;
 import org.dspace.content.DSpaceObject;
 import org.dspace.content.Item;
-import org.dspace.content.MetadataValue;
 import org.dspace.content.service.ItemService;
 import org.dspace.core.Constants;
 import org.dspace.core.Context;
@@ -51,6 +50,10 @@ import org.springframework.web.server.ResponseStatusException;
 /**
  * Linked Data Notification metadata processor for consuming notifications. The
  * storage of notification details are within item metadata.
+ * 
+ * @author William Welling
+ * @author Stefano Maffei (4Science.com)
+ * 
  */
 public class LDNMetadataProcessor implements LDNProcessor {
 
@@ -79,6 +82,8 @@ public class LDNMetadataProcessor implements LDNProcessor {
 
     private List<LDNMetadataChange> changes = new ArrayList<>();
 
+    private List<String> allowedExternalResolverUrls = new ArrayList<>();
+
     private String dspaceUIUrl;
 
     /**
@@ -94,6 +99,13 @@ public class LDNMetadataProcessor implements LDNProcessor {
 
     @PostConstruct
     public void init() {
+        String resolverUrls = configurationService.getProperty("ldn.notify.allowed-external-resolver-urls");
+        if (resolverUrls != null) {
+            for (String allowedExternalResolverUrl : resolverUrls.split(",")) {
+                this.allowedExternalResolverUrls.add(allowedExternalResolverUrl.trim());
+            }
+        }
+
         this.dspaceUIUrl = configurationService.getProperty("dspace.ui.url");
     }
 
@@ -131,10 +143,8 @@ public class LDNMetadataProcessor implements LDNProcessor {
 
         Item item = lookupItem(context, notification);
 
-        List<MetadataValue> metadataValuesToRemove = new ArrayList<>();
-
         for (LDNMetadataChange change : changes) {
-            String condition = renderTemplate(velocityContext, change.getConditionTemplate());
+            String condition = change.renderTemplate(velocityContext, velocityEngine, change.getConditionTemplate());
 
             boolean proceed = Boolean.parseBoolean(condition);
 
@@ -142,62 +152,7 @@ public class LDNMetadataProcessor implements LDNProcessor {
                 continue;
             }
 
-            if (change instanceof LDNMetadataAdd) {
-                LDNMetadataAdd add = ((LDNMetadataAdd) change);
-                String value = renderTemplate(velocityContext, add.getValueTemplate());
-                log.info(
-                        "Adding {}.{}.{} {} {}",
-                        add.getSchema(),
-                        add.getElement(),
-                        add.getQualifier(),
-                        add.getLanguage(),
-                        value);
-
-                itemService.addMetadata(
-                        context,
-                        item,
-                        add.getSchema(),
-                        add.getElement(),
-                        add.getQualifier(),
-                        add.getLanguage(),
-                        value);
-
-            } else if (change instanceof LDNMetadataRemove) {
-                LDNMetadataRemove remove = (LDNMetadataRemove) change;
-
-                for (String qualifier : remove.getQualifiers()) {
-                    List<MetadataValue> itemMetadata = itemService.getMetadata(
-                            item,
-                            change.getSchema(),
-                            change.getElement(),
-                            qualifier,
-                            Item.ANY);
-
-                    for (MetadataValue metadatum : itemMetadata) {
-                        boolean delete = true;
-                        for (String valueTemplate : remove.getValueTemplates()) {
-                            String value = renderTemplate(velocityContext, valueTemplate);
-                            if (!metadatum.getValue().contains(value)) {
-                                delete = false;
-                            }
-                        }
-                        if (delete) {
-                            log.info("Removing {}.{}.{} {} {}",
-                                    remove.getSchema(),
-                                    remove.getElement(),
-                                    qualifier,
-                                    remove.getLanguage(),
-                                    metadatum.getValue());
-
-                            metadataValuesToRemove.add(metadatum);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!metadataValuesToRemove.isEmpty()) {
-            itemService.removeMetadataValues(context, item, metadataValuesToRemove);
+            change.doAction(velocityContext, velocityEngine, context, item);
         }
 
         context.turnOffAuthorisationSystem();
@@ -343,24 +298,62 @@ public class LDNMetadataProcessor implements LDNProcessor {
      */
     private String resolveContext(Notification notification) {
         String url = notification.getContext().getId();
-        if (!url.startsWith(this.dspaceUIUrl)) {
-            log.info("Attempting to resolve external context id {}", url);
+        if (isExternalContextId(url)) {
             try {
-                HttpHeaders headers = this.restTemplate.headForHeaders(url);
-                if (headers.containsKey(LOCATION_HEADER_KEY)) {
-                    return headers.getFirst(LOCATION_HEADER_KEY);
+                URI uri = new URI(url);
+                if (isAllowedExternalContextId(url)) {
+                    log.info("Attempting to resolve external context id {}", url);
+                    HttpHeaders headers = this.restTemplate.headForHeaders(uri);
+                    if (headers.containsKey(LOCATION_HEADER_KEY)) {
+                        url = headers.getFirst(LOCATION_HEADER_KEY);
+                    } else {
+                        log.error("External context id {} HEAD response did not contain Location header", url);
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                format("Invalid context id %s", url));
+                    }
                 } else {
-                    log.error("External context id {} HEAD response did not contain Location header", url);
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                            format("Invalid context id %s", url));
+                    String message = format("Context id %s not allowed for external dereference", url);
+                    log.error(message);
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
                 }
-            } catch (RestClientException e) {
-                log.error(format("Failed to resolve context id %s.", url), e);
+            } catch (NullPointerException | URISyntaxException | RestClientException e) {
+                log.error(format("Failed to resolve context id %s", url), e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        format("Failed to resolve context id %s. %s", url, e.getMessage()));
+                        format("Failed to resolve context id %s: %s", url, e.getMessage()));
             }
         }
+
         return url;
+    }
+
+    /**
+     * Determine if the context id is an external context id by checking if it does
+     * not start with the DSpace UI URL.
+     * 
+     * @param url context id
+     * @return whether context id is external
+     */
+    private boolean isExternalContextId(String url) {
+        return !url.startsWith(this.dspaceUIUrl);
+    }
+
+    /**
+     * Determine if external context id is allowed by checking if starts with one of
+     * the allowed external resolver urls.
+     * 
+     * @param url external context id
+     * @return whether external context id is allowed
+     */
+    private boolean isAllowedExternalContextId(String url) {
+        boolean allowExternalContextId = false;
+        for (String allowedExternalResolverUrl : this.allowedExternalResolverUrls) {
+            if (url.startsWith(allowedExternalResolverUrl)) {
+                allowExternalContextId = true;
+                break;
+            }
+        }
+
+        return allowExternalContextId;
     }
 
     /**
@@ -384,20 +377,5 @@ public class LDNMetadataProcessor implements LDNProcessor {
         return velocityContext;
     }
 
-    /**
-     * Render velocity template with provided context.
-     *
-     * @param context  velocity context
-     * @param template template to render
-     * @return String results of rendering
-     */
-    private String renderTemplate(VelocityContext context, String template) {
-        StringWriter writer = new StringWriter();
-        StringResourceRepository repository = StringResourceLoader.getRepository();
-        repository.putStringResource("template", template);
-        velocityEngine.getTemplate("template").merge(context, writer);
-
-        return writer.toString();
-    }
 
 }
