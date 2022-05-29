@@ -30,6 +30,7 @@ import org.dspace.core.I18nUtil;
 import org.dspace.eperson.EPerson;
 import org.dspace.services.ConfigurationService;
 import org.dspace.web.ContextUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,10 @@ import org.mockito.MockitoAnnotations;
  */
 @RunWith(Parameterized.class)
 public class LDNEmailActionTest {
+
+    private MockedStatic<ContextUtil> contextMock;
+    private MockedStatic<I18nUtil> i18nMock;
+    private MockedStatic<Email> emailMock;
 
     @Mock
     private ConfigurationService configurationService;
@@ -70,8 +75,19 @@ public class LDNEmailActionTest {
     public String actionSendFilter;
 
     @Before
-    public void init() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        contextMock = Mockito.mockStatic(ContextUtil.class);
+        i18nMock = Mockito.mockStatic(I18nUtil.class);
+        emailMock = Mockito.mockStatic(Email.class);
+    }
+
+    @After
+    public void tearDown() {
+        contextMock.close();
+        i18nMock.close();
+        emailMock.close();
     }
 
     @Test
@@ -98,30 +114,23 @@ public class LDNEmailActionTest {
             "eexciting@dspace.org"
         });
 
-        try (
-            MockedStatic<ContextUtil> contextUtilities = Mockito.mockStatic(ContextUtil.class);
-            MockedStatic<I18nUtil> i18nUtilities = Mockito.mockStatic(I18nUtil.class);
-            MockedStatic<Email> emailUtilities = Mockito.mockStatic(Email.class);
-        ) {
-            contextUtilities.when(() -> ContextUtil.obtainCurrentRequestContext())
-              .thenReturn(context);
+        contextMock.when(() -> ContextUtil.obtainCurrentRequestContext())
+            .thenReturn(context);
 
-            i18nUtilities.when(() -> I18nUtil.getEPersonLocale(any(EPerson.class)))
-              .thenReturn(locale);
+        i18nMock.when(() -> I18nUtil.getEPersonLocale(any(EPerson.class)))
+            .thenReturn(locale);
 
-            i18nUtilities.when(() -> I18nUtil.getEmailFilename(any(Locale.class), anyString()))
-              .thenReturn("coar_notify_released");
+        i18nMock.when(() -> I18nUtil.getEmailFilename(any(Locale.class), anyString()))
+            .thenReturn("coar_notify_released");
 
-            emailUtilities.when(() -> Email.getEmail(anyString()))
-                .thenReturn(email);
+        emailMock.when(() -> Email.getEmail(anyString()))
+            .thenReturn(email);
 
-            ActionStatus status = emailAction.execute(notification, item);
+        ActionStatus status = emailAction.execute(notification, item);
 
-            assertEquals(ActionStatus.CONTINUE, status);
+        assertEquals(ActionStatus.CONTINUE, status);
 
-            verify(email, times(1)).send();
-        }
-
+        verify(email, times(1)).send();
     }
 
     @Parameterized.Parameters
