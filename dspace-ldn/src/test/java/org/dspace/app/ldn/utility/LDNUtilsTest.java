@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * Tests for linked data notification utilities.
+ * LDN utilities tests.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LDNUtilsTest {

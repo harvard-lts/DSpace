@@ -43,8 +43,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Action to send email to receipients provided in actionSendFilter. The email
- * body will be result of templating actionSendFilter.
+ * LDN email action tests.
  */
 @RunWith(Parameterized.class)
 public class LDNEmailActionTest {
@@ -134,7 +133,7 @@ public class LDNEmailActionTest {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> requests() {
+    public static Collection<Object[]> parameters() {
         return new ArrayList<>(Arrays.asList(new Object[][] {
             { "SUBMITTER" },
             { "GROUP:test" },
