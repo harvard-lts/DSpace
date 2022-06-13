@@ -7,7 +7,6 @@
  */
 package org.dspace.app.ldn;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -17,12 +16,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.jsonldjava.utils.JsonUtils;
 import org.dspace.app.ldn.model.Notification;
 
-/**
- *
- */
 public class MockNotificationUtility {
 
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    public static ObjectMapper objectMapper;
 
     static {
         objectMapper = new ObjectMapper();
@@ -32,11 +28,11 @@ public class MockNotificationUtility {
     }
 
     private MockNotificationUtility() {
-
+        // Intentionally empty
     }
 
     public static Notification read(String relativeToRootFilepath) throws IllegalArgumentException, IOException {
-        try (FileInputStream fis = new FileInputStream(new File(relativeToRootFilepath))) {
+        try (FileInputStream fis = new FileInputStream(relativeToRootFilepath)) {
             return objectMapper.convertValue(JsonUtils.fromInputStream(fis), Notification.class);
         }
     }

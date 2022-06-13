@@ -14,9 +14,6 @@ import java.io.IOException;
 import org.dspace.app.ldn.MockNotificationUtility;
 import org.junit.Test;
 
-/**
- *
- */
 public class NotificationTest {
 
     @Test
