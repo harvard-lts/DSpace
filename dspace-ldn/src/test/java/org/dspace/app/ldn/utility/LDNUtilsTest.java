@@ -10,7 +10,7 @@ package org.dspace.app.ldn.utility;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class LDNUtilsTest {
     @Before
     public void setUp() {
         when(dspaceServicesFactory.getConfigurationService()).thenReturn(configurationService);
-        when(configurationService.getProperty(anyString())).thenReturn("||");
+        when(configurationService.getProperty(eq("ldn.metadata.delimiter"))).thenReturn("||");
 
         dspaceServiceFactoryMock = Mockito.mockStatic(DSpaceServicesFactory.class);
 
@@ -58,13 +58,13 @@ public class LDNUtilsTest {
 
     @Test
     public void testHasUUIDInURL() {
-        assertTrue(LDNUtils.hasUUIDInURL("http://localhost:3000/item/0fb9284e-6be3-4c38-8833-917048c8acb3"));
+        assertTrue(LDNUtils.hasUUIDInURL("http://localhost:4200/item/0fb9284e-6be3-4c38-8833-917048c8acb3"));
         assertFalse(LDNUtils.hasUUIDInURL("http://localhost:8080/handle/123456789/3"));
     }
 
     @Test
     public void testGetUUIDFromURL() {
-        UUID id = LDNUtils.getUUIDFromURL("http://localhost:3000/item/0fb9284e-6be3-4c38-8833-917048c8acb3");
+        UUID id = LDNUtils.getUUIDFromURL("http://localhost:4200/item/0fb9284e-6be3-4c38-8833-917048c8acb3");
         assertEquals("0fb9284e-6be3-4c38-8833-917048c8acb3", id.toString());
     }
 
