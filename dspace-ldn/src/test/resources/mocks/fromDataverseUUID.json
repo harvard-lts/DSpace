@@ -12,8 +12,8 @@
   "context": {
     "IsSupplementTo": [
       {
-        "id": "http://localhost:4200/handle/123456789/3",
-        "ietf:cite-as": "http://localhost:4200/handle/123456789/3",
+        "id": "http://localhost:4200/item/8b37662c-2b3c-466a-8f82-707d2228da6d",
+        "ietf:cite-as": "http://localhost:4200/item/8b37662c-2b3c-466a-8f82-707d2228da6d",
         "type": "sorg:ScholarlyArticle"
       }
     ]
