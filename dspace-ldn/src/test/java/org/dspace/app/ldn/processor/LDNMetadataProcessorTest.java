@@ -131,12 +131,8 @@ public class LDNMetadataProcessorTest {
         contextMock.when(() -> ContextUtil.obtainCurrentRequestContext())
             .thenReturn(context);
 
-        LDNContextRepeater repeater = new LDNContextRepeater();
-        repeater.setRepeatOver("IsSupplementTo");
-        ldnMetadataProcessor.setRepeater(repeater);
-
         when(configurationService.getProperty(eq("ldn.notify.allowed-external-resolver-urls"))).thenReturn("");
-        when(configurationService.getProperty(eq("dspace.ui.url"))).thenReturn("http://localhost:4200");
+        when(configurationService.getProperty(eq("dspace.ui.url"))).thenReturn("http://localhost:4000");
         when(configurationService.getProperty(eq("ldn.metadata.delimiter"))).thenReturn("||");
 
         when(item.getType()).thenReturn(Constants.ITEM);

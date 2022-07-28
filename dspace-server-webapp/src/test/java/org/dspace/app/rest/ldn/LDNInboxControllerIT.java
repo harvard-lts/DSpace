@@ -21,8 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.IOException;
 
 import org.dspace.app.ldn.LDNWebConfig;
-import org.dspace.app.ldn.model.Context;
 import org.dspace.app.ldn.model.Notification;
+import org.dspace.app.ldn.model.Object;
 import org.dspace.app.rest.test.AbstractControllerIntegrationTest;
 import org.dspace.builder.CollectionBuilder;
 import org.dspace.builder.CommunityBuilder;
@@ -69,10 +69,10 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
             "src/test/resources/mocks/dataverseNotificationWithHandle.json"
         );
 
-        Context context = notification.getContext().getIsSupplementTo().get(0);
+        Object object = notification.getObject();
 
-        context.setId(url);
-        context.setIetfCiteAs(url);
+        object.setIetfCiteAs(url);
+        object.setObject(url);
 
         String content = LDNTestUtility.toJson(notification);
 
@@ -92,11 +92,12 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
             "src/test/resources/mocks/dataverseNotificationWithUUID.json"
         );
 
-        Context context = notification.getContext().getIsSupplementTo().get(0);
-
         String url = String.format("http://localhost:4000/item/%s", item.getID());
-        context.setId(url);
-        context.setIetfCiteAs(url);
+
+        Object object = notification.getObject();
+
+        object.setIetfCiteAs(url);
+        object.setObject(url);
 
         String content = LDNTestUtility.toJson(notification);
 

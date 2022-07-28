@@ -9,20 +9,14 @@
     "name": "Dataverse Repository",
     "type": "Service"
   },
-  "context": {
-    "IsSupplementTo": [
-      {
-        "id": "http://localhost:4000/handle/123456789/3",
-        "ietf:cite-as": "http://localhost:4000/handle/123456789/3",
-        "type": "sorg:ScholarlyArticle"
-      }
-    ]
-  },
   "object": {
     "id": "http://dev-hdc3b.lib.harvard.edu/dataset.xhtml?persistentId=doi:10.5072/FK2/NUB975",
     "ietf:cite-as": "https://doi.org/10.5072/FK2/NUB975",
     "sorg:name": "Not Really Replication Data for: The Future of the Internet and How to Stop It",
-    "type": "sorg:Dataset"
+    "type": "sorg:Dataset",
+    "subject": "https://doi.org/10.5072/FK2/NUB975",
+    "relationship": "http://purl.org/vocab/frbr/core#supplementOf",
+    "object": "http://localhost:4000/handle/123456789/3"
   },
   "origin": {
     "id": "http://dev-hdc3b.lib.harvard.edu/",
@@ -30,12 +24,12 @@
     "type": "Service"
   },
   "target": {
-    "id": "http://localhost:8080/",
+    "id": "http://localhost:4000/",
     "inbox": "http://localhost:8080/server/ldn/inbox",
     "type": "Service"
   },
   "type": [
     "Announce",
-    "coar-notify:ReleaseAction"
+    "coar-notify:RelationshipAction"
   ]
 }

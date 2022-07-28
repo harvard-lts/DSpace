@@ -95,7 +95,7 @@ public class LDNEmailActionTest {
 
         emailAction.setActionSendFilter(actionSendFilter);
 
-        String emailTemplate = Files.readString(Path.of("src/test/resources/mocks/coar_notify_released"));
+        String emailTemplate = Files.readString(Path.of("src/test/resources/mocks/coar_notify_relationship"));
 
         emailAction.setActionSendEmailTextFile(emailTemplate);
 
@@ -120,7 +120,7 @@ public class LDNEmailActionTest {
             .thenReturn(locale);
 
         i18nMock.when(() -> I18nUtil.getEmailFilename(any(Locale.class), anyString()))
-            .thenReturn("coar_notify_released");
+            .thenReturn("coar_notify_relationship");
 
         emailMock.when(() -> Email.getEmail(anyString()))
             .thenReturn(email);

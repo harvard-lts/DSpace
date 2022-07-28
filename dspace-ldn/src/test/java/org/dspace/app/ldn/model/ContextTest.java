@@ -22,13 +22,6 @@ public class ContextTest {
 
         fromDataverse.setIetfCiteAs("Test");
         assertEquals("Test", fromDataverse.getIetfCiteAs());
-
-        Context dataset = new Context();
-        Context anotherDataset = new Context();
-
-        // fromDataverse.getIsSupplementTo().add(dataset);
-        // fromDataverse.getIsSupplementTo().add(anotherDataset);
-
     }
 
     @Test
@@ -37,13 +30,6 @@ public class ContextTest {
 
         toDataverse.setIetfCiteAs("Test");
         assertEquals("Test", toDataverse.getIetfCiteAs());
-
-        Context item = new Context();
-        Context anotherItem = new Context();
-
-        // toDataverse.getIsSupplementedBy().add(item);
-        // toDataverse.getIsSupplementedBy().add(anotherItem);
-
     }
 
 }
