@@ -238,13 +238,13 @@
                     </property>
                     <property name="valueTemplates">
                         <list value-type="java.lang.String">
-                            <value>$LDNUtils.removedProtocol($notification.object.object)</value>
+                            <value>$LDNUtils.removedProtocol($notification.object.subject)</value>
                         </list>
                     </property>
                 </bean>
                 <bean class="org.dspace.app.ldn.processor.LDNMetadataAdd">
                     <property name="qualifier" value="relationship" />
-                    <property name="valueTemplate" value="$timestamp${ldn.metadata.delimiter}$LDNUtils.removedProtocol($notification.object.object)" />
+                    <property name="valueTemplate" value="$timestamp${ldn.metadata.delimiter}$LDNUtils.removedProtocol($notification.object.subject)" />
                 </bean>
             </list>
         </property>
