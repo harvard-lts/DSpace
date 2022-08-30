@@ -99,7 +99,7 @@ public class LDNEmailActionTest {
 
         emailAction.setActionSendEmailTextFile(emailTemplate);
 
-        Notification notification = MockNotificationUtility.read("src/test/resources/mocks/fromDataverse.json");
+        Notification notification = MockNotificationUtility.read("src/test/resources/mocks/inbound.json");
 
         when(context.getCurrentUser()).thenReturn(ePerson);
 

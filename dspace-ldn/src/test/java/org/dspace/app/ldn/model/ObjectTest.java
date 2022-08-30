@@ -31,8 +31,8 @@ public class ObjectTest {
         object.setRelationship("http://purl.org/vocab/frbr/core#supplementOf");
         assertEquals("http://purl.org/vocab/frbr/core#supplementOf", object.getRelationship());
 
-        object.setObject("https://research-organisation.org/dataverse/201203/421");
-        assertEquals("https://research-organisation.org/dataverse/201203/421", object.getObject());
+        object.setObject("https://research-organisation.org/repository/201203/421");
+        assertEquals("https://research-organisation.org/repository/201203/421", object.getObject());
     }
 
 }

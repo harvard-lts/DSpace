@@ -24,8 +24,8 @@
     "type": "Service"
   },
   "target": {
-    "id": "http://dev-hdc3b.lib.harvard.edu",
-    "inbox": "http://dev-hdc3b.lib.harvard.edu/api/inbox",
+    "id": "http://localhost:9100",
+    "inbox": "http://localhost:9100/api/inbox",
     "type": "Service"
   },
   "type": [

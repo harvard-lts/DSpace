@@ -58,7 +58,7 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
     }
 
     @Test
-    public void receiveDataverseNotificationWithHandleTest() throws Exception {
+    public void receiveNotificationWithHandleTest() throws Exception {
         context.turnOffAuthorisationSystem();
         Item item = createItem();
 
@@ -66,7 +66,7 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
         context.restoreAuthSystemState();
 
         Notification notification = LDNTestUtility.load(
-            "src/test/resources/mocks/dataverseNotificationWithHandle.json"
+            "src/test/resources/mocks/notificationWithHandle.json"
         );
 
         Object object = notification.getObject();
@@ -83,13 +83,13 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
     }
 
     @Test
-    public void receiveDataverseNotificationWithUUIDTest() throws Exception {
+    public void receiveNotificationWithUUIDTest() throws Exception {
         context.turnOffAuthorisationSystem();
         Item item = createItem();
         context.restoreAuthSystemState();
 
         Notification notification = LDNTestUtility.load(
-            "src/test/resources/mocks/dataverseNotificationWithUUID.json"
+            "src/test/resources/mocks/notificationWithUUID.json"
         );
 
         String url = String.format("http://localhost:4000/item/%s", item.getID());
@@ -142,7 +142,7 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
 
     @Test
     public void unsupportedMediaTypeTest() throws Exception {
-        String notification = dataverseNotificationWithHandle();
+        String notification = notificationWithHandle();
         getClient()
             .perform(post("/ldn/inbox").content(notification))
             .andExpect(status().is(415));
@@ -150,7 +150,7 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
 
     @Test
     public void handleNotFoundTest() throws Exception {
-        String notification = dataverseNotificationWithHandle();
+        String notification = notificationWithHandle();
         getClient()
             .perform(post("/ldn/inbox").content(notification).contentType("application/ld+json"))
             .andExpect(status().is(404));
@@ -158,7 +158,7 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
 
     @Test
     public void uuidNotFoundTest() throws Exception {
-        String notification = dataverseNotificationWithUUID();
+        String notification = notificationWithUUID();
         getClient()
             .perform(post("/ldn/inbox").content(notification).contentType("application/ld+json"))
             .andExpect(status().is(404));
@@ -181,12 +181,12 @@ public class LDNInboxControllerIT extends AbstractControllerIntegrationTest {
             .build();
     }
 
-    private String dataverseNotificationWithHandle() throws IOException {
-        return LDNTestUtility.loadJson("src/test/resources/mocks/dataverseNotificationWithHandle.json");
+    private String notificationWithHandle() throws IOException {
+        return LDNTestUtility.loadJson("src/test/resources/mocks/notificationWithHandle.json");
     }
 
-    private String dataverseNotificationWithUUID() throws IOException {
-        return LDNTestUtility.loadJson("src/test/resources/mocks/dataverseNotificationWithUUID.json");
+    private String notificationWithUUID() throws IOException {
+        return LDNTestUtility.loadJson("src/test/resources/mocks/notificationWithUUID.json");
     }
 
 }

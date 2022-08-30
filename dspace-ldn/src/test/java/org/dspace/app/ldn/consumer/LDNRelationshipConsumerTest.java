@@ -151,7 +151,7 @@ public class LDNRelationshipConsumerTest {
         MetadataValue coarNotifyAnnounceMetadatum = mock(MetadataValue.class);
         MetadataValue dataUriMetadatum = mock(MetadataValue.class);
 
-        when(coarNotifyAnnounceMetadatum.getValue()).thenReturn("2022-04-04T20:36:30Z||https://doi.org/10.5072/FK2/NUB975||dataverse.org/dataset.xhtml?persistentId=doi:10.5072/FK2/NUB975");
+        when(coarNotifyAnnounceMetadatum.getValue()).thenReturn("2022-04-04T20:36:30Z||https://doi.org/10.5072/FK2/NUB975||repository.org/dataset.xhtml?persistentId=doi:10.5072/FK2/NUB975");
         when(coarNotifyAnnounceMetadatum.getID()).thenReturn(1);
 
         when(dataUriMetadatum.getValue()).thenReturn("https://doi.org/10.5072/FK2/NUB975");

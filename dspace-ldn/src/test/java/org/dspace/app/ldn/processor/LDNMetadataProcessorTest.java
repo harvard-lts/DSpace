@@ -249,8 +249,8 @@ public class LDNMetadataProcessorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         return new ArrayList<>(Arrays.asList(new Object[][] {
-            { "src/test/resources/mocks/fromDataverse.json", 1, 1, 0 },
-            { "src/test/resources/mocks/fromDataverseUUID.json", 0, 0, 1 }
+            { "src/test/resources/mocks/inbound.json", 1, 1, 0 },
+            { "src/test/resources/mocks/inboundUUID.json", 0, 0, 1 }
         }));
     }
 
