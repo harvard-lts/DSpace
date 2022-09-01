@@ -106,7 +106,7 @@ public class AnnounceRelationshipService implements BusinessService {
 
             Object object = new Object();
             object.setTitle(item.getName());
-            object.addType("sorg:ScholarlyArticle");
+            object.addType("https://www.w3.org/ns/activitystreams#Relationship");
             object.setRelationship("http://purl.org/vocab/frbr/core#supplementOf");
 
             List<MetadataValue> metadata = item.getMetadata();
@@ -162,7 +162,7 @@ public class AnnounceRelationshipService implements BusinessService {
 
             HttpEntity<Notification> request = new HttpEntity<Notification>(notification, headers);
 
-            log.info("Announcing notification {}", request);
+            log.info("Sending announce relationship notification {}", request);
 
             restTemplate.postForLocation(URI.create(target.getInbox()), request);
         }
