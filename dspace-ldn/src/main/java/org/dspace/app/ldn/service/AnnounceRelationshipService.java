@@ -10,7 +10,6 @@ package org.dspace.app.ldn.service;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static org.dspace.app.ldn.RdfMediaType.APPLICATION_JSON_LD;
-import static org.dspace.app.ldn.utility.LDNUtils.processContextResolverId;
 
 import java.net.URI;
 import java.util.List;
@@ -86,8 +85,6 @@ public class AnnounceRelationshipService implements BusinessService {
 
             String serviceUrl = configurationService.getProperty(join(".", "service", serviceId, "url"));
             String serviceInboxUrl = configurationService.getProperty(join(".", "service", serviceId, "inbox.url"));
-            String serviceResolverUrl = configurationService
-                .getProperty(join(".", "service", serviceId, "resolver.url"));
 
             log.info("Target URL {}", serviceUrl);
             log.info("Target LDN Inbox URL {}", serviceInboxUrl);
@@ -116,14 +113,7 @@ public class AnnounceRelationshipService implements BusinessService {
                 if (field.getMetadataSchema().getName().equals("dc") &&
                     field.getElement().equals("data") &&
                     field.getQualifier().equals("uri")) {
-
-                    String ietfCiteAs = metadatum.getValue();
-                    String resolverId = processContextResolverId(ietfCiteAs);
-                    String id = serviceResolverUrl != null
-                        ? format("%s%s", serviceResolverUrl, resolverId)
-                        : ietfCiteAs;
-
-                    object.setObject(id);
+                    object.setObject(metadatum.getValue());
                 }
                 if (field.getMetadataSchema().getName().equals("dc") &&
                     field.getElement().equals("identifier") &&

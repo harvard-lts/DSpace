@@ -78,10 +78,4 @@ public class LDNUtilsTest {
         assertEquals("localhost:8080", LDNUtils.removedProtocol("https://localhost:8080"));
     }
 
-    @Test
-    public void testProcessContextResolverId() {
-        String doi = LDNUtils.processContextResolverId("https://doi.org/10.5072/FK2/NUB975");
-        assertEquals("doi:10.5072/FK2/NUB975", doi);
-    }
-
 }
