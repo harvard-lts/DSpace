@@ -13,7 +13,7 @@
     "id": "http://localhost:9100/dataset.xhtml?persistentId=doi:10.5072/FK2/NUB975",
     "ietf:cite-as": "https://doi.org/10.5072/FK2/NUB975",
     "sorg:name": "Not Really Replication Data for: The Future of the Internet and How to Stop It",
-    "type": "sorg:Dataset",
+    "type": "https://www.w3.org/ns/activitystreams#Relationship",
     "subject": "https://doi.org/10.5072/FK2/NUB975",
     "relationship": "http://purl.org/vocab/frbr/core#supplementOf",
     "object": "http://localhost:4000/item/8b37662c-2b3c-466a-8f82-707d2228da6d"
