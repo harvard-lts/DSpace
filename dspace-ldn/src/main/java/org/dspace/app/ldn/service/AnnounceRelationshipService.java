@@ -106,6 +106,8 @@ public class AnnounceRelationshipService implements BusinessService {
             object.addType("https://www.w3.org/ns/activitystreams#Relationship");
             object.setRelationship("http://purl.org/vocab/frbr/core#supplementOf");
 
+            String id = format("%/%", dspaceUIUrl, item.getID());
+
             List<MetadataValue> metadata = item.getMetadata();
             for (MetadataValue metadatum : metadata) {
                 MetadataField field = metadatum.getMetadataField();
@@ -120,7 +122,7 @@ public class AnnounceRelationshipService implements BusinessService {
                     field.getQualifier().equals("uri")) {
                     String itemIdentifierUri = metadatum.getValue();
                     log.info("Item Identifier URI {}", itemIdentifierUri);
-                    object.setId(itemIdentifierUri);
+                    object.setId(id);
                     object.setIetfCiteAs(itemIdentifierUri);
                     object.setSubject(itemIdentifierUri);
                 }

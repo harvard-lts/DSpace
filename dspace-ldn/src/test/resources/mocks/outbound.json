@@ -10,7 +10,7 @@
     "type": "Service"
   },
   "object": {
-    "id": "http://localhost:4000/handle/123456789/3",
+    "id": "http://localhost:4000/item/f8c3fc0e-906f-41fa-85a4-f045084b422d",
     "ietf:cite-as": "http://localhost:4000/handle/123456789/3",
     "sorg:name": "An Interesting Publication",
     "type": "https://www.w3.org/ns/activitystreams#Relationship",
