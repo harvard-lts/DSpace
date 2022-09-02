@@ -106,7 +106,7 @@ public class AnnounceRelationshipService implements BusinessService {
             object.addType("https://www.w3.org/ns/activitystreams#Relationship");
             object.setRelationship("http://purl.org/vocab/frbr/core#supplementOf");
 
-            String id = format("%/%", dspaceUIUrl, item.getID());
+            String id = format("%s/%s", dspaceUIUrl, item.getID());
 
             List<MetadataValue> metadata = item.getMetadata();
             for (MetadataValue metadatum : metadata) {
